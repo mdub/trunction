@@ -7,16 +7,31 @@ module Trunction
 
   def truncate_html(html, min, max = min)
     doc = Nokogiri::HTML::DocumentFragment.parse(html)
-    chars_remaining = max
-    last = 0
-    doc.children.each_with_index do |node, i|
-      node_length = node.text.length
-      break if node_length > chars_remaining
-      chars_remaining -= node_length
-      last = i
-    end
-    doc.children[(last + 1)..-1].remove
+    remove_everything_after(last_allowable_element_in(doc, max))
     doc.to_html
+  end
+
+  private
+
+  def last_allowable_element_in(doc, max)
+    last_element = doc
+    chars_remaining = max
+    doc.traverse do |node|
+      if node.text?
+        chars_remaining -= node.text.length
+        break unless chars_remaining > 0
+      end
+      last_element = node
+    end
+    last_element
+  end
+
+  def remove_everything_after(node)
+    while node
+      node.next.remove while node.next
+      break unless node.respond_to?(:parent)
+      node = node.parent
+    end
   end
 
 end
