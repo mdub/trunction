@@ -7,10 +7,8 @@ describe Trunction do
 
   include Trunction
 
-  let(:min_length) { 1 }
-
   let(:result) do
-    truncate_html(input, min_length, max_length).gsub("\n", '')
+    truncate_html(input, max_length).gsub("\n", '')
   end
 
   describe "#truncate_html" do

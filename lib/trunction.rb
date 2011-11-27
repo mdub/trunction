@@ -5,7 +5,7 @@ module Trunction
 
   extend self
 
-  def truncate_html(html, min, max = min)
+  def truncate_html(html, max)
     doc = Nokogiri::HTML::DocumentFragment.parse(html)
     remove_everything_after(last_allowable_element_in(doc, max))
     doc.to_html
