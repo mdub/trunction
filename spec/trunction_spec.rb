@@ -59,4 +59,20 @@ describe Trunction do
 
   end
 
+  context "a final paragraph with inline elements" do
+
+    let(:input) { "<p>one</p><p>two</p><p><b>one</b>, <b>two</b>, <b>three</b>, <b>four</b></p>" }
+
+    context "with max-length shorter than input" do
+
+      let(:max_length) { total_length - 1 }
+
+      it "drops the entire final paragraph" do
+        result.should == "<p>one</p><p>two</p>"
+      end
+
+    end
+
+  end
+
 end
