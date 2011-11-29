@@ -30,7 +30,7 @@ module Trunction
       catch(:done) do
         @doc.traverse do |node|
           accumulate_text(node) if node.text?
-          @last_block_element = node if node.description && node.description.block?
+          @last_block_element = node if block?(node)
           @last_element = node
         end
       end
@@ -43,6 +43,10 @@ module Trunction
 
     def last_node
       @last_block_element || @last_element
+    end
+
+    def block?(node)
+      node.description && node.description.block?
     end
 
     def remove_everything_else
