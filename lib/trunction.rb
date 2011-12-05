@@ -16,46 +16,38 @@ module Trunction
     def initialize(doc, max)
       @doc = doc
       @max = max
-      @chars_remaining = max
+      @size = 0
     end
 
     def execute
-      find_the_end
-      remove_everything_else
+      find_the_last_block
+      remove_everything_after(@last_block_element)
     end
 
     private
 
-    def find_the_end
+    def find_the_last_block
       catch(:done) do
         @doc.traverse do |node|
-          accumulate_text(node) if node.text?
-          record(node)
+          if node.text?
+            accumulate_text(node)
+          elsif block?(node)
+            @last_block_element = node
+          end
         end
       end
     end
 
     def accumulate_text(text_node)
-      @chars_remaining -= text_node.text.length
-      throw(:done) if limit_reached?
+      @size += text_node.text.length
+      throw(:done) if @size >= @max
     end
-
-    def limit_reached?
-      @chars_remaining <= 0
-    end
-
-    def record(node)
-      @last_block_element = node if block?(node)
-    end
-
-    attr_reader :last_block_element
 
     def block?(node)
       node.description && node.description.block?
     end
 
-    def remove_everything_else
-      node = last_block_element
+    def remove_everything_after(node)
       while node
         node.next.remove while node.next
         break unless node.respond_to?(:parent)
