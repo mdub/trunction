@@ -14,7 +14,7 @@ module Trunction
     def initialize(html, max)
       @doc = Nokogiri::HTML::DocumentFragment.parse(html)
       @max = max
-      @size = 0
+      @word_count = 0
     end
 
     def execute
@@ -39,8 +39,8 @@ module Trunction
     end
 
     def accumulate_text(text_node)
-      @size += text_node.text.length
-      throw(:done) if @size >= @max
+      @word_count += text_node.text.split.length
+      throw(:done) if @word_count >= @max
     end
 
     def block?(node)
