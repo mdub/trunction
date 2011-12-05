@@ -6,22 +6,22 @@ module Trunction
   extend self
 
   def truncate_html(html, max)
-    doc = Nokogiri::HTML::DocumentFragment.parse(html)
-    Truncation.new(doc, max).execute
-    doc.to_html
+    Truncation.new(html, max).execute
   end
 
   class Truncation
 
-    def initialize(doc, max)
-      @doc = doc
+    def initialize(html, max)
+      @doc = Nokogiri::HTML::DocumentFragment.parse(html)
       @max = max
       @size = 0
     end
 
     def execute
       find_the_last_block
+      return "" if @last_block_element.nil?
       remove_everything_after(@last_block_element)
+      @doc.to_html
     end
 
     private

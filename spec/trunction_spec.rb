@@ -1,8 +1,11 @@
+# encoding: utf-8
+
 require 'trunction'
 
 describe Trunction do
 
-  let(:total_length) { Nokogiri::HTML::DocumentFragment.parse(input).text.length }
+  let(:full_text) { Nokogiri::HTML::DocumentFragment.parse(input).text }
+  let(:total_length) { full_text.length }
   let(:ellipsis) { "&#8230;" }
 
   include Trunction
@@ -33,6 +36,16 @@ describe Trunction do
 
         it "drops elements until beneath max-length" do
           result.should == "<p>one</p><p>two</p>"
+        end
+
+      end
+
+      context "with max-length shorter than first paragraph" do
+
+        let(:max_length) { 1 }
+
+        it "returns empty String" do
+          result.should == ""
         end
 
       end
