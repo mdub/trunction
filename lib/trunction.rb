@@ -46,19 +46,16 @@ module Trunction
 
     def record(node)
       @last_block_element = node if block?(node)
-      @last_element = node
     end
 
-    def last_node
-      @last_block_element || @last_element
-    end
+    attr_reader :last_block_element
 
     def block?(node)
       node.description && node.description.block?
     end
 
     def remove_everything_else
-      node = last_node
+      node = last_block_element
       while node
         node.next.remove while node.next
         break unless node.respond_to?(:parent)
