@@ -30,15 +30,23 @@ module Trunction
       catch(:done) do
         @doc.traverse do |node|
           accumulate_text(node) if node.text?
-          @last_block_element = node if block?(node)
-          @last_element = node
+          record(node)
         end
       end
     end
 
     def accumulate_text(text_node)
       @chars_remaining -= text_node.text.length
-      throw(:done) unless @chars_remaining > 0
+      throw(:done) if limit_reached?
+    end
+
+    def limit_reached?
+      @chars_remaining <= 0
+    end
+
+    def record(node)
+      @last_block_element = node if block?(node)
+      @last_element = node
     end
 
     def last_node
